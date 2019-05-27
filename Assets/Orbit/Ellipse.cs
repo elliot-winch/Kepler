@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [RequireComponent(typeof(LineRenderer))]
 public class Ellipse : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Ellipse : MonoBehaviour
 
     public void DrawEllipse(GravitationalBody body)
     {
+        /*
         var positions = CreateEllipse(body);
         LineRenderer lr = GetComponent<LineRenderer>();
 
@@ -17,22 +19,25 @@ public class Ellipse : MonoBehaviour
         {
             lr.SetPosition(i, positions[i]);
         }
+        */
 
-        transform.position = body.EllipseCenter;
+        //transform.position = body.EllipseCenter.PositionScaledVector;
     }
 
+    /*
     Vector3[] CreateEllipse(GravitationalBody body)
     {
         var positions = new Vector3[resolution + 1];
-        Quaternion q = Quaternion.AngleAxis(body.Inclination * Mathf.Rad2Deg, body.VernalEquinox);
+        Quaternion q = Quaternion.AngleAxis((float)body.Inclination * Mathf.Rad2Deg, body.VernalEquinox.Vector);
 
         for (int i = 0; i <= resolution; i++)
         {
-            float angle = ((float)i / (float)resolution * 2.0f * Mathf.PI);
-            positions[i] = new Vector3(body.SemiMajorAxis * Mathf.Cos(angle), 0f, body.SemiMinorAxis * Mathf.Sin(angle));
-            positions[i] = q * positions[i];
+            float angle = ((i / (float)resolution) * 2.0f * Mathf.PI);
+            //positions[i] = new Vector3((float)(body.SemiMajorAxis.DoubleValue * Mathf.Cos(angle)), 0f, (float)(body.SemiMinorAxis.DoubleValue * Mathf.Sin(angle)));
+            //positions[i] = q * positions[i];
         }
 
         return positions;
     }
+    */
 }

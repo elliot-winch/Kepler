@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GravitationBodyUI : MonoBehaviour
 {
     public LineRenderer periapsisLine;
@@ -12,16 +13,17 @@ public class GravitationBodyUI : MonoBehaviour
     {
         periapsisLine.SetPositions(new Vector3[]
         {
-            body.Orbiting.transform.position,
-            body.Periapsis
+            //body.Orbiting.position.ScaledValue,
+            //body.Periapsis.PositionScaledVector
         });
 
         apoapsisLine.SetPositions(new Vector3[]
         {
-            body.Orbiting.transform.position,
-            body.Apoapsis
+            //body.Orbiting.position.ScaledValue,
+            //body.Apoapsis.PositionScaledVector
         });
 
         ellipse.DrawEllipse(body);
     }
 }
+
