@@ -1,28 +1,31 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 //Maths from https://space.stackexchange.com/questions/1904/how-to-programmatically-calculate-orbital-elements-using-position-velocity-vecto
 public class GravitationalBody : MonoBehaviour
 {
+    //Definitions
     public static Quantity GravitationalConstant = new Quantity
     (
         value: new SciNumber(6.67408, -11),
         units: new Units(new List<UnitExponent>()
         {
             new UnitExponent(SIUnitType.Meter,     3),
-            new UnitExponent(SIUnitType.Kilogram, -2),
-            new UnitExponent(SIUnitType.Second,   -1),
+            new UnitExponent(SIUnitType.Kilogram, -1),
+            new UnitExponent(SIUnitType.Second,   -2),
         })
     );
 
 
-    //Definitions
     public static double lowInclination = 0.01;
 
     //Parameters
+    public Transform WorldTransform;
     
     public GravitationalBody Orbiting;
+    public List<GravitationalBody> OrbitedBy;
 
     public Quantity mass;
     public MechanicalElements mechanicalElements;
@@ -49,8 +52,24 @@ public class GravitationalBody : MonoBehaviour
             mechanicalElements = orbitalElements.ToMechanicalElements(mu);
 
             //Update front end
-            transform.position = mechanicalElements.position.Scaled.Vector;  
+            WorldTransform.position = WorldPosition(mechanicalElements, Orbiting);
         }
+
+        OrbitedBy?.ForEach(b =>
+        {
+            b.Orbiting = this;
+            b.UpdateOrbit(time);
+        });
+    }
+
+    public static Vector3 WorldPosition(MechanicalElements me, GravitationalBody orbiting)
+    {
+        return (orbiting.mechanicalElements.position + me.position).Scaled.Vector;
+    }
+
+    public MechanicalElements SampleOrbit(double trueAnomoly)
+    {
+        return orbitalElements.ToMechanicalElements(GravitationalConstant * Orbiting.mass, trueAnomoly);
     }
 
     private Quantity3 PositionAt(double timestep)
@@ -63,9 +82,9 @@ public class GravitationalBody : MonoBehaviour
         var P = orbitalElements.SemiMajorAxis * (Math.Cos(E) - e);
         var Q = orbitalElements.SemiMajorAxis * Math.Sin(E) * Math.Sqrt(1 - (e * e));
 
-        var perifocal = new Quantity3(SciNumber.Zero, P.TrueValue, Q.TrueValue, orbitalElements.SemiMajorAxis.units);
+        var perifocal = new Quantity3(P.TrueValue, Q.TrueValue, SciNumber.Zero, orbitalElements.SemiMajorAxis.units);
 
-        return perifocal.Mul(OrbitalUtility.PerifocalToEquitorial(orbitalElements));
+        return perifocal.Mul(orbitalElements.PerifocalToEquitorial());
     }
 
     private double MeanAnomoly(double trueAnomoly, double e)

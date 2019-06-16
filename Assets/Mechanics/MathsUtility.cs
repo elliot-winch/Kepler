@@ -12,8 +12,8 @@ public static class MathsUtility
         return Between(a, - forgiveness, forgiveness, false);
     }
 
-    public static bool Between(double x, double min, double max, bool strictly)
+    public static bool Between(double x, double min, double max, bool strictly = false)
     {
-        return strictly ? (x > min && x < max) : (x >= min && x <= max);
+        return strictly ? (x - min > 0 && x - max < 0) : (x - min >= 0 && x - max <= 0);
     }
 }

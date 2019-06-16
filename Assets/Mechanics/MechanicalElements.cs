@@ -24,7 +24,7 @@ public class MechanicalElements
 
         oe.Inclination = Math.Acos((angularMomentum.Y / angularMomentum.Magnitude).DoubleValue);
 
-        Quantity3 nodeVector = Quantity3.Cross(new Quantity3(SciNumber.Zero, SciNumber.One, SciNumber.Zero), angularMomentum);
+        Quantity3 nodeVector = Quantity3.Cross(new Quantity3(SciNumber.One, SciNumber.Zero, SciNumber.Zero), angularMomentum);
 
         oe.LongitudeOfAscendingNode = Math.Acos((nodeVector.X / nodeVector.Magnitude).DoubleValue);
 

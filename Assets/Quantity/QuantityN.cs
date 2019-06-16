@@ -88,7 +88,16 @@ public abstract class QuantityN
 
     public T Sqrt<T>() where T : QuantityN
     {
-        return CreateQuantityInstance<T>(this.values.Select(x => x.Sqrt).ToList(), new Units());
+        return CreateQuantityInstance<T>(this.values.Select(x => x.Sqrt).ToList(), 
+            new Units(units.unitExponents.Select(v =>
+            {
+                if(Mathf.Abs(v.exponent) % 2 != 0)
+                {
+                    throw new Exception("Quantity: Sqrt does not support creating non-integer unit exponents. Given units: " + units);
+                }
+
+                return new UnitExponent(v.unit, v.exponent / 2);
+            }).ToList()));
     }
 
     public Quantity SqrMagitude

@@ -8,7 +8,9 @@ public class GravityManager : MonoBehaviour
     public static GravityManager Instance { get; private set; }
 
     public GravitationalBody sun;
-    public List<GravitationalBody> planets;
+
+    //TEMP
+    public RotatingBody[] rots;
 
     public float timeScale = 1;
 
@@ -19,6 +21,13 @@ public class GravityManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        planets.ForEach(p => p.UpdateOrbit(Time.fixedDeltaTime * timeScale));
+        double deltaTime = Time.fixedDeltaTime * timeScale;
+
+        sun.UpdateOrbit(deltaTime);
+
+        foreach(var r in rots)
+        {
+            r.UpdateRotation(deltaTime);
+        }
     }
 }
