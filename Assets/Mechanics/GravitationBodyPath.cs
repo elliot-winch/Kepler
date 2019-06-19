@@ -2,28 +2,32 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-[RequireComponent(typeof(TrackTarget))]
-public class GravitationBodyPath : MonoBehaviour
+public class GravitationBodyPath : GravitationalBodyUIElement
 {
-    public GravitationalBody body;
     public int resolution = 100;
     public bool autoRefresh;
 
     private LineRenderer lr;
-    private TrackTarget tt;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         lr = GetComponent<LineRenderer>();
-        tt = GetComponent<TrackTarget>();
     }
 
     private void Start()
     {
-        //TODO: position at barycenter, not one foci 
-        tt.target = body.Orbiting.WorldTransform;
-
         Refresh();
+    }
+
+    private void Update()
+    {
+        //TODO barycenter
+        if(body.Orbiting != null)
+        {
+            //transform.position = body.Orbiting.WorldTransform.position;
+        }
     }
 
     public void Refresh()
@@ -44,6 +48,11 @@ public class GravitationBodyPath : MonoBehaviour
 
         lr.positionCount = points.Length;
         lr.SetPositions(points);
+    }
+
+    public override void Display(ViewLevel level)
+    {
+        lr.enabled = level == ViewLevel.Orbiting;
     }
 }
 

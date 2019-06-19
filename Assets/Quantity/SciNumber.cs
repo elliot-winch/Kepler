@@ -188,6 +188,19 @@ public class SciNumber
         }
     }
 
+    //Inverse of EstimateLog. Used for UI
+    public static float EstimateExponential(float v)
+    {
+        return new SciNumber((v - (int)v) * 10 + 1, (int)v).FloatValue;
+    }
+
+    //Inverse of EstimateExponential. Used for UI
+    public static float EstimateLog(float v)
+    {
+        var s = new SciNumber(v);
+        return (float)(s.exponent + ((s.mantissa - 1) / 10));
+    }
+
     public SciNumber Clone()
     {
         return new SciNumber(mantissa, exponent);

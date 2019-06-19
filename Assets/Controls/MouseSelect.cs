@@ -2,28 +2,26 @@
 using System.Collections;
 using UnityEngine;
 
-public class MouseSelect<T> where T : MonoBehaviour
+public interface IClickable
 {
-    public LayerMask layer = LayerMask.NameToLayer("Default");
+    void OnMouseOverBegin();
+    void OnMouseOverEnd();
+    void OnLeftClick();
+    //public Action<T> OnRightClick;
+    void OnLeftDoubleClick();
+}
+
+public class MouseSelect : MonoBehaviour
+{
+    public LayerMask layer;
     public float maxDist = Mathf.Infinity;
     public float doubleClickTime = 0.2f;
+    public new Camera camera;
 
-    public Action<T> OnMouseOverBegin;
-    public Action<T> OnMouseOverEnd;
-    public Action<T> OnLeftClick;
-    //public Action<T> OnRightClick;
-    public Action<T> OnLeftDoubleClick;
-
-    private Camera camera;
-    private T current;
+    private IClickable current;
     private Coroutine clickCo;
 
-    public MouseSelect(Camera c)
-    {
-        this.camera = c;
-    }
-
-    public void Update()
+    void Update()
     {
         if(camera == null)
         {
@@ -31,21 +29,15 @@ public class MouseSelect<T> where T : MonoBehaviour
         }
 
         Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out RaycastHit hitInfo, maxDist);
-        
-        T t = hitInfo.transform?.GetComponentInParent<T>();
+
+        IClickable t = hitInfo.transform?.GetComponent<IClickable>();
 
         //MouseOver
         if(t != current)
         {
-            if(current != null)
-            {
-                OnMouseOverEnd?.Invoke(current);
-            }
+            current?.OnMouseOverEnd();
 
-            if(t != null)
-            {
-                OnMouseOverBegin?.Invoke(t);
-            }
+            t?.OnMouseOverBegin();
         }
 
         current = t;
@@ -55,12 +47,12 @@ public class MouseSelect<T> where T : MonoBehaviour
         {
             if (clickCo == null)
             {
-                clickCo = CoroutineDispatch.Instance.StartCoroutine(Click(0, current));
+                clickCo = StartCoroutine(Click(0, current));
             }
         }
     }
 
-    private IEnumerator Click(int mouseIndex, T curr)
+    private IEnumerator Click(int mouseIndex, IClickable curr)
     {
         yield return null;
 
@@ -70,7 +62,7 @@ public class MouseSelect<T> where T : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0) && curr == current)
             {
-                OnLeftDoubleClick?.Invoke(curr);
+                curr.OnLeftDoubleClick();
                 clickCo = null;
                 yield break;
             }
@@ -80,7 +72,7 @@ public class MouseSelect<T> where T : MonoBehaviour
             yield return null;
         }
 
-        OnLeftClick?.Invoke(curr);
+        curr.OnLeftClick();
         clickCo = null;
     }
 }

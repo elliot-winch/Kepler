@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class MouseSelectTest : MonoBehaviour
 {
     public new Camera camera;
@@ -12,10 +12,8 @@ public class MouseSelectTest : MonoBehaviour
     {
         ms = new MouseSelect<GravitationalBody>(camera)
         {
-            OnLeftClick = x => Debug.Log("LeftClick " + x.name), 
-            OnMouseOverBegin = x => Debug.Log("MouseOver " + x.name), 
-            OnMouseOverEnd = x => Debug.Log("MouseOver " + x.name), 
-            OnLeftDoubleClick = x => Debug.Log("Double " + x.name),
+
+            //OnLeftDoubleClick = x => Debug.Log("Double " + x.name),
         };
     }
 
@@ -24,3 +22,4 @@ public class MouseSelectTest : MonoBehaviour
         ms.Update();
     }
 }
+*/

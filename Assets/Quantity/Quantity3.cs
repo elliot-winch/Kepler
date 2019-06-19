@@ -10,7 +10,7 @@ public class Quantity3 : QuantityN
     public Quantity Y => new Quantity(values[1], units);
     public Quantity Z => new Quantity(values[2], units);
 
-    public Quantity3 Scaled => SIUnitManager.Instance.Scale(this);
+    public Quantity3 Scaled => SimulationManager.Instance.Scale(this);
 
     public Quantity3() : base() { }
 

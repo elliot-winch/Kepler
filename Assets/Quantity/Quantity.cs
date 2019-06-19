@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class Quantity : QuantityN
 {
-    public Quantity Scaled => SIUnitManager.Instance.Scale(this);
+    public Quantity Scaled => SimulationManager.Instance.Scale(this);
     public double DoubleValue => TrueValue.Value;
     public SciNumber TrueValue => values[0];
 

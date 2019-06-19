@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 //Maths from https://space.stackexchange.com/questions/1904/how-to-programmatically-calculate-orbital-elements-using-position-velocity-vecto
-public class GravitationalBody : MonoBehaviour
+public partial class GravitationalBody : MonoBehaviour
 {
     //Definitions
     public static Quantity GravitationalConstant = new Quantity
@@ -18,7 +17,6 @@ public class GravitationalBody : MonoBehaviour
         })
     );
 
-
     public static double lowInclination = 0.01;
 
     //Parameters
@@ -30,13 +28,32 @@ public class GravitationalBody : MonoBehaviour
     public Quantity mass;
     public MechanicalElements mechanicalElements;
     public OrbitalElements orbitalElements;
+    
+    /*
+    //Calcualted properties
+    public Quantity3 Barycenter
+    {
+        get
+        {
+            var semiMajorAxisDir = (mechanicalElements.position - Orbiting.mechanicalElements.position).Normalised<Quantity3>();
 
-    private void Start()
+            var r = (mass / Orbiting.mass);
+            var r2 = 1 + r;
+            var dis = orbitalElements.SemiMajorAxis * r2;
+            var pos = semiMajorAxisDir * dis;
+            var bary = mechanicalElements.position - pos;
+
+            return bary;
+        }
+    }
+    */
+
+    protected virtual void Start()
     {
         orbitalElements?.SetToRadians();
     }
 
-    public void UpdateOrbit(double time)
+    public virtual void UpdateOrbit(double time)
     {
         if(Orbiting != null)
         {
@@ -50,9 +67,6 @@ public class GravitationalBody : MonoBehaviour
             orbitalElements.UpdateTrueAnomoly(mu, time);
 
             mechanicalElements = orbitalElements.ToMechanicalElements(mu);
-
-            //Update front end
-            WorldTransform.position = WorldPosition(mechanicalElements, Orbiting);
         }
 
         OrbitedBy?.ForEach(b =>
@@ -60,11 +74,8 @@ public class GravitationalBody : MonoBehaviour
             b.Orbiting = this;
             b.UpdateOrbit(time);
         });
-    }
 
-    public static Vector3 WorldPosition(MechanicalElements me, GravitationalBody orbiting)
-    {
-        return (orbiting.mechanicalElements.position + me.position).Scaled.Vector;
+        UpdateRepresentation();
     }
 
     public MechanicalElements SampleOrbit(double trueAnomoly)
